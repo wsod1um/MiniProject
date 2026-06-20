@@ -41,6 +41,7 @@ Takes the **Greedy** route as the initial route, and use **2-opt** local search 
 - **Time complexity per iteration:** each full pass is O(n²) for delta evaluation; feasibility checks add O(n) per accepted/attempted swap; run until locally optimal or hitting the time limit
 - **Limitation:** gets permanently stuck at the first local optimum reached.
 
+### Score on HUSTACK : 482 / 500
 ---
 
 ## 3. Tabu Search 
@@ -54,5 +55,6 @@ Starts from the **2-opt local search** route and runs a full **Tabu Search**: at
 - **Time complexity per iteration:** O(n²) to scan the full swap neighborhood, with O(n) feasibility checks only on promising candidates (after pruning).
 - **Escapes local optima:** unlike Local Search, it can accept a worsening move when it's the best available, allowing it to move past the kind of local optimum that traps the 2-opt approach.
 - **Known limitation:** the swap-only neighborhood becomes very restrictive when `k` is small (tight capacity), since most arbitrary two-position swaps violate capacity or precedence — this can cause the neighborhood to be exhausted quickly (no admissible feasible move left), ending the search early ( Test case 1 in HUSTACK)
+
 ### Score on HUSTACK : 484 / 500
 ---
