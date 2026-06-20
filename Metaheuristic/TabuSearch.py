@@ -82,6 +82,23 @@ def solve():
         return cost
 
     route = Greedy(c, n, k)
+    # To optimize time, we can run a small local search first to reach the local optimum, then use tabu search to escape it
+    # Allocate 50s to local search and the rest to tabu
+    improved = True
+    while improved and time.perf_counter() - start_time < 50:
+        improved = False
+        for i in range(2*n):
+            for j in range(i+1, 2*n):
+                current_delta = calculate_swap(route, i, j, c)
+                if current_delta < 0:
+                    route[i], route[j] = route[j], route[i]
+                    if is_valid(route, n, k):
+                        improved = True
+                        break
+                    else:
+                        route[i], route[j] = route[j], route[i]
+            if improved:
+                break
 
     current = route[:]
     current_cost = total_cost(current, c)
@@ -121,7 +138,7 @@ def solve():
                     best_pair = (i, j)
                     best_move = move
 
-            if time.perf_counter() - start_time >= 250:
+            if time.perf_counter() - start_time >= 200:
                 break
 
         if best_pair is None:
