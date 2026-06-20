@@ -13,7 +13,7 @@
 |---|---|---|
 | `Greedy.py` | Nearest-neighbor construction | Builds one feasible route greedily, no optimization |
 | `LocalSearch.py` | Greedy + 2-opt local search | Greedy solution, then iteratively improved until a local optimum |
-| `TabuSearch.py` | Greedy + Tabu Search | 2-opt solution, then optimized with memory-guided search that escapes local optima |
+| `TabuSearch.py` | Tabu Search | 2-opt solution, then optimized with memory-guided search that escapes local optima |
 
 
 ## 1. Greedy
