@@ -1,9 +1,6 @@
 import sys
-import time
 
 def solve():
-    
-    start_time = time.perf_counter()
     input_data = sys.stdin.read().split()
     
     n = int(input_data[0])
@@ -19,11 +16,36 @@ def solve():
             index +=1
         c.append(row)
 
-    # Initial Valid Route: Pickup and drop off each passenger right away 
-    route = []
-    for i in range(1,n+1):
-        route.append(i)
-        route.append(i+n)
+    # Initial Valid Route: Greedy
+    def Greedy(c,n,k):
+        route = []
+        visited = [False]*(2*n+1)
+        load = 0
+        current_node = 0
+        # Journey of the bus going from first stop to last stop 
+        for i in range(2*n):
+            best_next = -1
+            min_distance = float('inf')
+            # Finding the next best node from current node by iterating
+            for v in range(1,2*n+1):
+                # Constraints
+                if visited[v]:
+                    continue
+                if v <= n and load >= k:
+                    continue
+                if v > n and not visited[v-n]:
+                    continue
+                if c[current_node][v] < min_distance:
+                    min_distance = c[current_node][v]
+                    best_next = v
+            visited[best_next] = True
+            current_node = best_next
+            route.append(best_next)
+            if best_next <= n:
+                load += 1
+            else:
+                load -= 1
+        return route
 
     #Check validity of route
     def is_valid(route,n,k):
@@ -58,26 +80,24 @@ def solve():
 
         return delta
 
-    
-    while time.perf_counter() - start_time < 300:
+    route = Greedy(c,n,k)
+    improved = True
+    while improved:
         improved = False
-
         for i in range(2*n):
-            for j in range(i+1,2*n):
-                route[i],route[j] = route[j],route[i]
-                if is_valid(route,n,k):
-                    route[i],route[j] = route[j],route[i]
-                    current_delta = calculate_swap(route,i,j,c)
-                    if current_delta < 0:
-                        route[i], route[j] = route[j], route[i]
+            for j in range(i+1, 2*n):
+                
+                current_delta = calculate_swap(route, i, j, c)
+                if current_delta < 0:
+                    route[i], route[j] = route[j], route[i]
+                    if is_valid(route, n, k):
                         improved = True
-                        break
-                else:
-                    route[i],route[j] = route[j],route[i]
+                        break 
+                    else:
+                        route[i], route[j] = route[j], route[i]
+            
             if improved:
-                break
-        if not improved:
-            break
+                break 
 
     print(n)
     print(" ".join(map(str,route)))
