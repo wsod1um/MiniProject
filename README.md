@@ -1,4 +1,4 @@
-# CBUS with Heuristic and Meta heuristic approaachj
+# CBUS with Heuristic and Meta heuristic approach
 
 ### Constraints
 
