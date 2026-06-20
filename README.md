@@ -48,7 +48,7 @@ Takes the **Greedy** route as the initial route, and use **2-opt** local search 
 
 ### Mechanism
 
-Starts from the **2-opt local search** route and runs a full **Tabu Search**: at every iteration, consider all swap moves, willing to accept the best available move even if it temporarily worsens the route, as long as that move isn't "tabu" (recently reversed). A short-term memory (the tabu list) prevents the search from immediately undoing its own recent moves and fall back into local optimum,allowing the escape local optima.
+Starts from the **2-opt local search** route and runs a full **Tabu Search**: at every iteration, consider all swap moves, willing to accept the best available move even if it temporarily worsens the route, as long as that move isn't "tabu" (recently reversed). A short-term memory (the tabu list) prevents the search from immediately undoing its own recent moves and fall back into local optimum, allowing the escape of local optima.
 
 ### Properties
 
