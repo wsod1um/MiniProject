@@ -1,6 +1,8 @@
 import sys
+import time
 
 def solve():
+    start_time = time.perf_counter()
     input_data = sys.stdin.read().split()
     
     n = int(input_data[0])
@@ -12,7 +14,7 @@ def solve():
     for _ in range(2*n+1):
         row = []
         for _ in range(2*n+1):
-            row.append(int(input_data[index]))
+            row.append(int(input_data[index]))  
             index +=1
         c.append(row)
 
@@ -81,8 +83,10 @@ def solve():
         return delta
 
     route = Greedy(c,n,k)
+
+    # 2opt
     improved = True
-    while improved:
+    while improved and time.perf_counter() - start_time < 250:
         improved = False
         for i in range(2*n):
             for j in range(i+1, 2*n):
