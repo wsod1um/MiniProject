@@ -43,6 +43,7 @@ def solve():
             load += 1
         else:
             load -= 1
+            
     print(n)
     print(" ".join(map(str,route)))
 if __name__ == '__main__':

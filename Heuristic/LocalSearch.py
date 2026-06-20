@@ -99,7 +99,6 @@ def solve():
                         break 
                     else:
                         route[i], route[j] = route[j], route[i]
-            
             if improved:
                 break 
 
