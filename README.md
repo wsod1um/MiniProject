@@ -12,8 +12,8 @@
 | File | Approach | Description |
 |---|---|---|
 | `Greedy.py` | Nearest-neighbor construction | Builds one feasible route greedily, no optimization |
-| `LocalSearch.py` | Greedy + 2-opt/swap local search | Greedy solution, then iteratively improved until a local optimum |
-| `TabuSearch.py` | Greedy + Tabu Search | Greedy solution, then optimized with memory-guided search that escapes local optima |
+| `LocalSearch.py` | Greedy + 2-opt local search | Greedy solution, then iteratively improved until a local optimum |
+| `TabuSearch.py` | Greedy + Tabu Search | 2-opt solution, then optimized with memory-guided search that escapes local optima |
 
 
 ## 1. Greedy
@@ -30,7 +30,7 @@ From node 0, travel to nearest feasible neighboring node, repeat until 2n stops 
 ### Score on HUSTACK : 474 / 500
 ---
 
-## 2. Local Search (`LocalSearch.py`)
+## 2. Local Search 
 
 ### Mechanism
 
@@ -43,7 +43,7 @@ Takes the **Greedy** route as the initial route, and use **2-opt** local search 
 
 ---
 
-## 3. Tabu Search (`TabuSearch.py`)
+## 3. Tabu Search 
 
 ### Mechanism
 
