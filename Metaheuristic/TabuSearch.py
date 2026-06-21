@@ -1,5 +1,6 @@
 import sys
 import time
+import random
 
 def solve():
     start_time = time.perf_counter()
@@ -10,22 +11,23 @@ def solve():
 
     c = []
     index = 2
-    for _ in range(2*n+1):
+    N = 2*n
+    for _ in range(N+1):
         row = []
-        for _ in range(2*n+1):
+        for _ in range(N+1):
             row.append(int(input_data[index]))
             index += 1
         c.append(row)
 
     def Greedy(c, n, k):
         route = []
-        visited = [False]*(2*n+1)
+        visited = [False]*(N+1)
         load = 0
         current_node = 0
-        for i in range(2*n):
+        for i in range(N):
             best_next = -1
             min_distance = float('inf')
-            for v in range(1, 2*n+1):
+            for v in range(1, N+1):
                 if visited[v]:
                     continue
                 if v <= n and load >= k:
@@ -46,7 +48,7 @@ def solve():
 
     def is_valid(route, n, k):
         load = 0
-        visited = [False]*(2*n+1)
+        visited = [False]*(N+1)
         for i in route:
             if i <= n:
                 load += 1
@@ -80,46 +82,31 @@ def solve():
             cost += c[route[idx]][route[idx+1]]
         cost += c[route[-1]][0]
         return cost
-
+    
+    
     route = Greedy(c, n, k)
-    # To optimize time, we can run a small local search first to reach the local optimum, then use tabu search to escape it
-    # Allocate 50s to local search and the rest to tabu
-    improved = True
-    while improved and time.perf_counter() - start_time < 50:
-        improved = False
-        for i in range(2*n):
-            for j in range(i+1, 2*n):
-                current_delta = calculate_swap(route, i, j, c)
-                if current_delta < 0:
-                    route[i], route[j] = route[j], route[i]
-                    if is_valid(route, n, k):
-                        improved = True
-                        break
-                    else:
-                        route[i], route[j] = route[j], route[i]
-            if improved:
-                break
-
     current = route[:]
     current_cost = total_cost(current, c)
     best = current[:]
     best_cost = current_cost
 
+
     # A move (swapping two elements) will be added to tabu_list if it is accepted
     # That move is forbidden for [tenure] iterations
     # This prevents the code to fall back into local optima while trying to escape
     tabu_list = {}  
-    tenure = max(5, n // 10)
     it = 0
     no_improve = 0
+    T_min = max(5, int(0.5 * (n)**(1/2)))
+    T_max = max(15, int(1.5 * (n)**(1/2)))
 
-    while time.perf_counter() - start_time < 250:
+    while time.perf_counter() - start_time < 290:
         best_delta = float('inf')
         best_pair = None
         best_move = None
 
-        for i in range(2*n):
-            for j in range(i+1, 2*n):
+        for i in range(N):
+            for j in range(i+1, N):
                 delta = calculate_swap(current, i, j, c)
                 if delta >= best_delta:
                     continue
@@ -138,7 +125,7 @@ def solve():
                     best_pair = (i, j)
                     best_move = move
 
-            if time.perf_counter() - start_time >= 200:
+            if time.perf_counter() - start_time >= 290:
                 break
 
         if best_pair is None:
@@ -148,7 +135,8 @@ def solve():
         current[i], current[j] = current[j], current[i]
         current_cost += best_delta
 
-        tabu_list[best_move] = it + tenure
+        dynamic_tenure = random.randint(T_min, T_max)
+        tabu_list[best_move] = it + dynamic_tenure + random.randint(0,dynamic_tenure//10)
         # Remove expired nodes
         tabu_list = {m: exp for m, exp in tabu_list.items() if exp > it}
 
@@ -164,7 +152,17 @@ def solve():
         # Escape Local Optima mechanism
         if no_improve > 200:
             current = best[:]
-            current_cost = best_cost
+            t_feasible = False
+            it = 0
+            while not t_feasible and it < 200:
+                i = random.randint(0,N-1)
+                j = random.randint(i,N-1)
+                current[i], current[j] = current[j], current[i]
+                t_feasible = (is_valid(current, n, k) and ((i,j) not in tabu_list))
+                if not t_feasible:
+                    current[i], current[j] = current[j], current[i]
+                it+=1
+            current_cost = total_cost(current,c)
             no_improve = 0
 
     print(n)

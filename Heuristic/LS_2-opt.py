@@ -7,30 +7,26 @@ def solve():
     
     n = int(input_data[0])
     k = int(input_data[1])
-
+    N = 2*n
     c = []
 
     index = 2
-    for _ in range(2*n+1):
+    for _ in range(N+1):
         row = []
-        for _ in range(2*n+1):
+        for _ in range(N+1):
             row.append(int(input_data[index]))  
             index +=1
         c.append(row)
 
-    # Initial Valid Route: Greedy
     def Greedy(c,n,k):
         route = []
-        visited = [False]*(2*n+1)
+        visited = [False]*(N+1)
         load = 0
         current_node = 0
-        # Journey of the bus going from first stop to last stop 
-        for i in range(2*n):
+        for i in range(N):
             best_next = -1
             min_distance = float('inf')
-            # Finding the next best node from current node by iterating
-            for v in range(1,2*n+1):
-                # Constraints
+            for v in range(1,N+1):
                 if visited[v]:
                     continue
                 if v <= n and load >= k:
@@ -52,7 +48,7 @@ def solve():
     #Check validity of route
     def is_valid(route,n,k):
         load = 0
-        visited = [False]*(2*n+1)
+        visited = [False]*(N+1)
         for i in route:
             if i <= n:
                 load += 1
@@ -84,12 +80,12 @@ def solve():
 
     route = Greedy(c,n,k)
 
-    # 2opt
+    # 2-opt
     improved = True
-    while improved and time.perf_counter() - start_time < 250:
+    while improved and time.perf_counter() - start_time < 290:
         improved = False
-        for i in range(2*n):
-            for j in range(i+1, 2*n):
+        for i in range(N):
+            for j in range(i+1, N):
                 
                 current_delta = calculate_swap(route, i, j, c)
                 if current_delta < 0:
@@ -98,7 +94,7 @@ def solve():
                         improved = True
                         break 
                     else:
-                        route[i], route[j] = route[j], route[i]
+                        route[i], route[j] = route[j], route[i]  
             if improved:
                 break 
 
