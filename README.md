@@ -62,24 +62,80 @@ and dropped off exactly once.
 
 ---
 
-## Shared Initialization – Greedy Heuristic
+## Solution 0 – Greedy (`Greedy.py`)
 
-All three algorithms start from the same greedy solution:
+### Algorithm-Specific Constraints
+
+- **Selection rule**: at every step choose the **nearest unvisited reachable
+  node** from the current position (nearest-neighbour greedy criterion).
+- **Feasibility by construction**: constraints C1 and C2 are enforced
+  during node selection, so the output route is always valid — no
+  post-hoc check is needed.
+- **Determinism**: given identical input, the algorithm always produces the
+  same route (no randomness, no time limit).
+- **Single pass**: the route is built in exactly N = 2n steps with no
+  backtracking or improvement phase.
+
+### Code Flow
+
+| Section | What It Does |
+|---------|-------------|
+| **Input parsing** | Reads n, k, and the (2n+1)×(2n+1) distance matrix from stdin. |
+| **Initialisation** | Sets `current_node = 0` (depot), `load = 0`, and a `visited` boolean array of size 2n+1. |
+| **Construction loop** | Runs N times. Each iteration scans all unvisited nodes v and picks the closest one that satisfies both constraints: pickup v is skipped if `load ≥ k`; drop-off v+n is skipped if passenger v-n has not yet been picked up. The chosen node is appended to the route, marked visited, and `load` updated. |
+| **Output** | Prints n and the completed route as space-separated integers. |
+
+### Cost Evaluation
+
+**Time complexity**: O(N²) — N outer steps × up to N candidate nodes
+scanned per step.
+
+**Space complexity**: O(N) for the route and visited arrays; O(N²) for
+the distance matrix.
+
+**Quality**: The greedy heuristic produces a **feasible** solution very
+quickly, but offers **no optimality guarantee**. It is susceptible to
+myopic choices — a locally cheap edge can force expensive detours later.
+On structured instances (clustered or Euclidean distances) it tends to
+produce reasonable starting points; on adversarial inputs it may be far
+from optimal. Its primary value is as a fast, deterministic seed for the
+local search algorithms below.
+
+### Pseudocode
 
 ```
-current_node = 0
-load = 0
+function solve_greedy(c, n, k):
+    route        ← []
+    visited      ← [False] * (N+1)
+    load         ← 0
+    current_node ← 0
 
-for i in 1..2n:
-    best_next = argmin { c[current_node][v] } over unvisited v such that:
-        - if v is a pickup  (v ≤ n): load < k          [capacity not exceeded]
-        - if v is a drop-off (v > n): passenger v-n already picked up
-    visit best_next
-    update load (+1 for pickup, -1 for drop-off)
+    for step ← 1 to N:
+        best_next    ← -1
+        min_distance ← +∞
+
+        for v ← 1 to N:
+            if visited[v]:               continue   // already visited
+            if v ≤ n and load ≥ k:       continue   // C2: would exceed capacity
+            if v > n and not visited[v-n]: continue  // C1: drop-off before pickup
+
+            if c[current_node][v] < min_distance:
+                min_distance ← c[current_node][v]
+                best_next    ← v
+
+        visited[best_next] ← True
+        route.append(best_next)
+        current_node ← best_next
+
+        if best_next ≤ n: load += 1    // picked up a passenger
+        else:             load -= 1    // dropped off a passenger
+
+    return route
 ```
 
-The greedy heuristic constructs a feasible solution greedily in O(N²) time,
-always choosing the nearest reachable stop.
+> **Note for local search solutions:** Solutions 1–3 all use this exact
+> greedy procedure to build their initial feasible route before applying
+> their respective improvement strategies.
 
 ---
 
@@ -99,7 +155,7 @@ always choosing the nearest reachable stop.
 | Section | What It Does |
 |---------|-------------|
 | **Input parsing** | Reads n, k, and the (2n+1)×(2n+1) distance matrix from stdin. |
-| **Greedy init** | Builds a feasible starting route using the nearest-neighbour heuristic. |
+| **Greedy init** | Builds a feasible starting route using the Greedy heuristic (Solution 0). |
 | **`calculate_swap`** | Computes the cost delta Δ for swapping positions i and j without modifying the route. Handles the adjacent (j = i+1) and non-adjacent cases separately to avoid double-counting shared edges. |
 | **`is_valid`** | Verifies C1 (precedence) and C2 (capacity) by walking the route. |
 | **2-opt loop** | Iterates over all pairs (i, j); swaps the two positions, runs `is_valid`, accepts if Δ < 0 and feasible, otherwise reverts. Breaks to restart scan on first acceptance. |
@@ -185,7 +241,7 @@ function calculate_swap(route, i, j, c):
 | Section | What It Does |
 |---------|-------------|
 | **Input parsing** | Reads n, k, and the distance matrix from stdin. |
-| **Greedy init** | Builds the initial feasible route; computes its total cost incrementally. |
+| **Greedy init** | Builds the initial feasible route using the Greedy heuristic (Solution 0); computes its total cost incrementally. |
 | **`remove_and_insert_and_calculate_cost`** | Removes node x from its current position, updates the cost by subtracting the two edges incident to x and adding the bridging edge, then inserts x at position i, updating cost again. Returns the new cost and the modified route. O(N) due to list index/insert. |
 | **Random walk loop** | Each iteration: pick a random pickup x and a random insertion index i; re-insert x at i. Then pick a random index j ≥ i and re-insert x+n at j (ensuring drop-off stays after pickup). If the new cost is the best seen *and* the route is valid, save it; otherwise revert to the recorded best. |
 | **Output** | Prints n and the best route found. |
@@ -275,7 +331,7 @@ function remove_and_insert(route, x, i, prev_cost):
 |---------|-------------|
 | **Input parsing** | Reads n, k, and the distance matrix from stdin. |
 | **Parameter setup** | Computes T\_min = max(5, ⌊0.5√n⌋) and T\_max = max(15, ⌊1.5√n⌋) — tenure scales with problem size. |
-| **Greedy init** | Builds the initial feasible route; computes its full cost. |
+| **Greedy init** | Builds the initial feasible route using the Greedy heuristic (Solution 0); computes its full cost. |
 | **Main loop — best neighbour scan** | Iterates all (i, j) pairs; skips non-feasible swaps, tabu moves (unless aspirated), and any swap worse than the current best candidate delta. Tracks the best valid swap found. |
 | **Move execution** | Applies the best swap; adds the move to `tabu_list` with a dynamic expiry; prunes expired entries. |
 | **Best update / no-improve counter** | Updates the global best if cost improved; increments `no_improve` otherwise. |
@@ -395,14 +451,15 @@ function solve_tabu(c, n, k):
 
 ## Summary Comparison
 
-| Feature | 2-opt | Random Walk | Tabu Search |
-|---------|-------|-------------|-------------|
-| Initialization | Greedy | Greedy | Greedy |
-| Neighbourhood | Pairwise swap | Remove & re-insert | Pairwise swap |
-| Acceptance | First improving | Always (random walk) | Best non-tabu |
-| Escape mechanism | None | Implicit (random) | Explicit (perturbation + restart) |
-| Memory | None | None | Tabu list (dictionary) |
-| Aspiration criterion | No | No | Yes (beats global best) |
-| Optimum type | Strict local optimum | Stochastic best | Near-global (memory-guided) |
-| Per-iteration cost | O(N²) + O(N) | O(N) | O(N²) + O(N) |
-| Best suited for | Small–medium n | Large n (fast iterations) | Medium–large n (quality) |
+| Feature | Greedy | 2-opt | Random Walk | Tabu Search |
+|---------|--------|-------|-------------|-------------|
+| Initialization | — (standalone) | Greedy (Sol. 0) | Greedy (Sol. 0) | Greedy (Sol. 0) |
+| Neighbourhood | None | Pairwise swap | Remove & re-insert | Pairwise swap |
+| Acceptance | N/A (construction) | First improving | Always (random walk) | Best non-tabu |
+| Escape mechanism | None | None | Implicit (random) | Explicit (perturbation + restart) |
+| Memory | None | None | None | Tabu list (dictionary) |
+| Aspiration criterion | No | No | No | Yes (beats global best) |
+| Optimum type | Greedy feasible solution | Strict local optimum | Stochastic best | Near-global (memory-guided) |
+| Time complexity | O(N²) one-shot | O(N²) + O(N) per iter | O(N) per iter | O(N²) + O(N) per iter |
+| Time limit needed | No | Yes (290 s) | Yes (290 s) | Yes (290 s) |
+| Best suited for | Seed / baseline | Small–medium n | Large n (fast iterations) | Medium–large n (quality) |
