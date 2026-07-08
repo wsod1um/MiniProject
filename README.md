@@ -5,7 +5,7 @@ This contains the solution for CBUS problem.
 
 **Heuristic :** 
 
-Solution 0 – Greedy (`Greedy.py`)
+Solution 0 – Greedy (`Greedy.py`)\
 Solution 1 – Swap Move Local Search (`LS_Swap.py`)\
 Solution 2 – Random Walk (`LS_RandomWalk.py`)
 
@@ -28,7 +28,7 @@ Input format is the same as on HUSTACK
 |---------|--------|-------|-------------|-------------|
 | Initialization | — | Greedy (Sol. 0) | Greedy (Sol. 0) | Greedy (Sol. 0) |
 | Neighbourhood | None | Pairwise swap | Remove & re-insert | Pairwise swap |
-| Acceptance | N/A (construction) | First improving | Always (random walk) | Best non-tabu |
+| Acceptance | None | First improving | Always (random walk) | Best non-tabu |
 | Escape mechanism | None | None | Implicit (random) | Explicit (perturbation + restart) |
 | Memory | None | None | None | Tabu list (dictionary) |
 | Aspiration criterion | No | No | No | Yes (beats global best) |
