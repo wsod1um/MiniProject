@@ -5,19 +5,19 @@ This contains the solution for CBUS problem.
 
 **Heuristic :** 
 
-Solution 0 – Greedy (`Greedy.py`)\
-Solution 1 – Swap Move Local Search (`LS_Swap.py`)\
-Solution 2 – Random Walk (`LS_RandomWalk.py`)
+- Solution 0 – Greedy (`Greedy.py`)\
+- Solution 1 – Swap Move Local Search (`LS_Swap.py`)\
+- Solution 2 – Random Walk (`LS_RandomWalk.py`)
 
 **Metaheuristic :**
 
-Solution 3 – Tabu Search (`TabuSearch.py`)
+- Solution 3 – Tabu Search (`TabuSearch.py`)
 
 ---
 
 ## Installation
 
-- Run python code directly\
+- Run python code directly
 - Input format is the same as on HUSTACK, standard I/O
 
 ---
@@ -34,4 +34,4 @@ Solution 3 – Tabu Search (`TabuSearch.py`)
 | Aspiration criterion | No | No | No | Yes (beats global best) |
 | Optimum type | Greedy feasible solution | Strict local optimum | Stochastic best | Near-global (memory-guided) |
 | Time complexity | O(N²) | O(N²) + O(N) per iter | O(N) per iter | O(N²) + O(N) per iter |
-| Best suited for | Seed / baseline | Small–medium n | Large n (fast iterations) | Medium–large n (quality) |
+| Best suited for | Initialization | Small–medium n | Large n (fast iterations) | Medium–large n (quality) |
