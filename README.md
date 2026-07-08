@@ -9,7 +9,7 @@ Solution 0 – Greedy (`Greedy.py`)Solution 0 – Greedy (`Greedy.py`)\
 Solution 1 – Swap Move Local Search (`LS_Swap.py`)\
 Solution 2 – Random Walk (`LS_RandomWalk.py`)\
 
-Metaheuristic : 
+**Metaheuristic : **
 
 Solution 3 – Tabu Search (`TabuSearch.py`)\ 
 
