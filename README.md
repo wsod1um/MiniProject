@@ -17,8 +17,8 @@ Solution 3 – Tabu Search (`TabuSearch.py`)
 
 ## Installation
 
-Run python code directly
-Input format is the same as on HUSTACK
+- Run python code directly\
+- Input format is the same as on HUSTACK, standard I/O
 
 ---
 
