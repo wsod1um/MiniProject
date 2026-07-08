@@ -3,15 +3,20 @@
 ## Overview
 This contains the solution for CBUS problem.
 
-Heuristic : 
+**Heuristic :** 
 
 Solution 0 – Greedy (`Greedy.py`)Solution 0 – Greedy (`Greedy.py`)\
 Solution 1 – Swap Move Local Search (`LS_Swap.py`)\
 Solution 2 – Random Walk (`LS_RandomWalk.py`)\
+
 Metaheuristic : 
-Solution 3 – Tabu Search (`TabuSearch.py`)
+
+Solution 3 – Tabu Search (`TabuSearch.py`)\ 
+
 ---
+
 ## Installation
+
 Run python code directly
 Input format is the same as on HUSTACK
 
